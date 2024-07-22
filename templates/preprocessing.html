@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preprocessing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <style>
+        .preprocess-container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .preprocess-container h2 {
+            margin-top: 0;
+        }
+
+        .preprocess-button {
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .preprocess-button button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .preprocess-button button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .preprocess-button {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    {% include 'menu.html' %}
+
+    <div class="content">
+        <h1>Preprocessing</h1>
+        <div class="preprocess-container">
+            <h2>Proses Preprocessing</h2>
+            <div class="preprocess-button">
+                <form method="POST" action="{{ url_for('preprocessing') }}">
+                    <button type="submit">Proses Preprocessing</button>
+                </form>
+            </div>
+        </div>
+
+        <h2>Ulasan Hasil Preprocessing</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ulasan</th>
+                    <th>Hasil Preprocessing</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in combined_data %}
+                <tr>
+                    <td>{{ item.original }}</td>
+                    <td>{{ item.preprocessing.stemming }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Individual Preprocessing Steps</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Original Text</th>
+                    <th>Cleaning</th>
+                    <th>Case Folding</th>
+                    <th>Tokenizing</th>
+                    <th>Stopword Removal</th>
+                    <th>Stemming</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in combined_data %}
+                <tr>
+                    <td>{{ item.original }}</td>
+                    <td>{{ item.preprocessing.cleaning }}</td>
+                    <td>{{ item.preprocessing.case_folding }}</td>
+                    <td>{{ item.preprocessing.tokenizing }}</td>
+                    <td>{{ item.preprocessing.stopword_removal }}</td>
+                    <td>{{ item.preprocessing.stemming }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

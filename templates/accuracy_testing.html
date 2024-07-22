@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengujian Akurasi</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .form-container {
+            margin-bottom: 15px;
+            text-align: center;
+            border: 2px solid #dddddd;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            
+        }
+
+        .form-container label {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .form-container input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .form-container input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 15px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .form-container input[type="submit"]:active {
+            background-color: #388e3c;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .grid-item {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .grid-item h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    {% include 'menu.html' %}
+    
+    <div class="content"> 
+        <h1>Pengujian Akurasi</h1>
+        <div class="form-container">
+            <form action="{{ url_for('accuracy_testing') }}" method="POST">
+                <label for="split_ratio">Pilih Pembagian Data:</label><br>
+                <input type="radio" id="split_70" name="split_ratio" value="0.3" {% if split_ratio == 0.3 %}checked{% endif %}>
+                <label for="split_70">70:30</label><br>
+                <input type="radio" id="split_80" name="split_ratio" value="0.2" {% if split_ratio == 0.2 %}checked{% endif %}>
+                <label for="split_80">80:20</label><br>
+                <input type="radio" id="split_90" name="split_ratio" value="0.1" {% if split_ratio == 0.1 %}checked{% endif %}>
+                <label for="split_90">90:10</label><br><br>
+                <input type="submit" value="Ubah Pembagian Data">
+            </form>   
+        </div>
+        <div class="grid-container">
+            <div class="grid-item">
+                <h2>Classification Report</h2>
+                <p>Akurasi: {{ accuracy }}</p>
+                <p>Precision: {{ metrics['precision'] }}</p>
+                <p>Recall: {{ metrics['recall'] }}</p>
+            </div>
+            <div class="grid-item">
+                <h2>Confusion Matrix</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Predicted Positive</th>
+                            <th>Predicted Neutral</th>
+                            <th>Predicted Negative</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Actual Positive</td>
+                            <td>TP_P: {{ confusion_mtx[2][2] }}</td>
+                            <td>FP_Ntt: {{ confusion_mtx[2][1] }}</td>
+                            <td>FP_Ng: {{ confusion_mtx[2][0] }}</td>
+                        </tr>
+                        <tr>
+                            <td>Actual Neutral</td>
+                            <td>FNt_P: {{ confusion_mtx[1][2] }}</td>
+                            <td>TNt_Nt: {{ confusion_mtx[1][1] }}</td>
+                            <td>FNt_Ng: {{ confusion_mtx[1][0] }}</td>
+                        </tr>
+                        <tr>
+                            <td>Actual Negative</td>
+                            <td>FNg_P: {{ confusion_mtx[0][2] }}</td>
+                            <td>FNg_Nt: {{ confusion_mtx[0][1] }}</td>
+                            <td>TNg_Ng: {{ confusion_mtx[0][0] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="grid-item">
+                <h2>Waktu Proses</h2>
+                <p>Training time: {{ training_time }} seconds</p>
+                <p>Predict time: {{ predict_time }} seconds</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

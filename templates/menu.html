@@ -1,0 +1,11 @@
+<div class="sidebar">
+    <ul>
+        <li><a href="{{ url_for('dashboard') }}" {% if request.path == url_for('dashboard') %}class="active"{% endif %}>Dashboard</a></li>
+        <li><a href="{{ url_for('train_data') }}" {% if request.path == url_for('train_data') %}class="active"{% endif %}>Dataset</a></li>
+        <li><a href="{{ url_for('preprocessing') }}" {% if request.path == url_for('preprocessing') %}class="active"{% endif %}>Preprocessing</a></li>
+        <li><a href="{{ url_for('naive_bayes_classification') }}" {% if request.path == url_for('naive_bayes_classification') %}class="active"{% endif %}>Klasifikasi Naive Bayes</a></li>
+        <li><a href="{{ url_for('accuracy_testing') }}" {% if request.path == url_for('accuracy_testing') %}class="active"{% endif %}>Pengujian Akurasi</a></li>
+        <li><a href="{{ url_for('sentiment_visualization') }}" {% if request.path == url_for('sentiment_visualization') %}class="active"{% endif %}>Visualisasi Sentimen</a></li>
+    </ul>
+</div>
+

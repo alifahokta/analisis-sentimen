@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klasifikasi Sentimen Naive Bayes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .classification-button-container {
+            margin-bottom: 15px;
+            text-align: center;
+            border: 2px solid #dddddd;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .classification-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 15px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .classification-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    {% include 'menu.html' %}
+
+    <div class="content">
+        <h1>Klasifikasi Sentimen Naive Bayes</h1>
+        
+        <div class="classification-button-container">
+            <p>Proses Klasifikasi</p>
+            <p>Proses mengklasifikasikan sentimen ulasan</p>
+            <form method="POST" action="{{ url_for('naive_bayes_classification') }}" class="split-ratio-form">
+                <label for="split_ratio">Pilih Pembagian Data:</label><br>
+                <input type="radio" id="split_70" name="split_ratio" value="0.3" {% if split_ratio == 0.3 %}checked{% endif %}>
+                <label for="split_70">70:30</label><br>
+                <input type="radio" id="split_80" name="split_ratio" value="0.2" {% if split_ratio == 0.2 %}checked{% endif %}>
+                <label for="split_80">80:20</label><br>
+                <input type="radio" id="split_90" name="split_ratio" value="0.1" {% if split_ratio == 0.1 %}checked{% endif %}>
+                <label for="split_90">90:10</label><br><br>
+                <button type="submit" class="classification-button">Proses Klasifikasi</button>
+            </form>             
+        </div>
+        
+        <h2>Hasil Klasifikasi</h2>
+        <table>
+           <thead>
+               <tr>
+                   <th>Ulasan Hasil Preprocessing</th>
+                   <th>Original Sentiment</th>
+                   <th>Predicted Sentiment</th>
+               </tr>
+           </thead>
+           <tbody>
+               {% for prediction in predictions %}
+               <tr>
+                   <td>{{ prediction.preprocessing_text }}</td>
+                   <td>{{ prediction.original_sentiment }}</td>
+                   <td>{{ prediction.predicted_sentiment }}</td>
+               </tr>
+               {% endfor %}
+           </tbody>
+        </table>
+
+    </div>
+</body>
+</html>

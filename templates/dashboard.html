@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <style>
+        .content {
+            padding: 20px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .grid-item {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        p {
+            line-height: 1.6;
+            text-align: justify;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    {% include 'menu.html' %}
+
+    <div class="content">
+        <h1>Dashboard</h1>
+        <h2>Sistem Analisis Sentimen Ulasan Pelanggan Pada Wisata Kampung Coklat</h2>
+        <div class="grid-container">
+            <div class="grid-item">
+                <p>Sistem analisis sentimen ulasan pelanggan ini dirancang untuk mengevaluasi ulasan-ulasan yang diberikan oleh pengunjung Wisata Kampung Coklat di Blitar melalui Google Maps. Dengan menggunakan algoritma Naive Bayes, sistem ini mampu mengklasifikasikan ulasan-ulasan tersebut ke dalam tiga kategori sentimen: positif, negatif, atau netral. Tujuan dari sistem ini adalah untuk memberikan wawasan berharga kepada pengelola wisata dalam memahami persepsi pelanggan dan meningkatkan kualitas layanan yang diberikan.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

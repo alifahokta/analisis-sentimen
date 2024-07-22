@@ -1,0 +1,113 @@
+/* Reset default margin and padding */
+body, ul {
+    margin: 0;
+    padding: 0;
+}
+
+/* Set font family */
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Header style */
+.header {
+    display: flex;
+    justify-content: space-between; /* Mengatur jarak antara elemen */
+    align-items: center;
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    z-index: 1000; /* Mengatur header di atas sidebar */
+    position: fixed; /* Membuat header tetap di atas */
+    width: 100%; /* Lebarkan header agar menutupi layar */
+    top: 0; /* Tempatkan header di bagian paling atas */
+}
+
+
+
+/* Logo style */
+.logo img {
+    width: 50px;
+    height: auto;
+}
+
+/* Administrator text style */
+.admin {
+    font-weight: bold;
+    white-space: nowrap; /* Hindari pemotongan teks */
+    margin-right: 50px; /* Geser ke kiri */
+}
+
+
+/* Sidebar (menu) style */
+.sidebar {
+    width: 200px;
+    background-color: #f4f4f4;
+    padding: 20px;
+    position: fixed; /* Membuat menu tetap di posisi */
+    top: 70px; /* Mulai dari bawah header */
+    bottom: 0; /* Merentangkan menu hingga ke bawah */
+    left: 0;
+    overflow-y: auto; /* Aktifkan gulir jika menu lebih panjang dari layar */
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+
+.sidebar ul li {
+    margin-bottom: 20px; /* Menambahkan jarak antara setiap item menu */
+}
+
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #333;
+    display: block; /* Menjamin setiap tautan berada di dalam kotak yang terpisah */
+    padding: 8px; /* Menambahkan ruang di sekitar tautan */
+    transition: background-color 0.3s ease; /* Animasi perubahan warna latar belakang */
+}
+
+.sidebar ul li a:hover {
+    color: #007BFF;
+    background-color: #f0f0f0; /* Warna latar belakang saat mengarahkan kursor */
+}
+
+/* Tautan yang aktif */
+.sidebar ul li a.active {
+    background-color: #007BFF; /* Warna latar belakang tautan aktif */
+    color: #fff; /* Warna teks tautan aktif */
+}
+
+/* Content style */
+.content {
+    margin-left: 250px; /* Geser konten ke kanan menu */
+    padding: 20px;
+    margin-top: 70px; /* Hindari tumpang tindih dengan header */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+

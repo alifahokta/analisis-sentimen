@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataset</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <style>
+        .upload-container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .upload-container h2 {
+            margin-top: 0;
+        }
+
+        .upload-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-container input[type="file"] {
+            display: none;
+        }
+
+        .upload-container label {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+
+        .upload-container button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .upload-container button:hover {
+            background-color: #45a049;
+        }
+
+        .upload-container #file-name {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px; /* Tambahkan margin atas untuk jarak dari elemen di atasnya */
+        }
+    
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+    
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+    
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+    
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+    
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Styling for buttons */
+        .update-button, .delete-button {
+            border: none;
+            cursor: pointer;
+            padding: 7px 14px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 12px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            border-radius: 6px;
+            width: 70px;
+        }
+
+        .update-button {
+            background-color: #4CAF50; /* Green */
+            color: white;
+        }
+
+        .update-button:hover {
+            background-color: #45a049; /* Darker Green */
+            color: white;
+        }
+
+        .delete-button {
+            background-color: #f44336; /* Red */
+            color: white;
+        }
+
+        .delete-button:hover {
+            background-color: #da190b; /* Darker Red */
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    {% include 'menu.html' %}
+
+    <div class="content">
+        <h1>Dataset</h1>
+
+        <div class="upload-container">
+            <h2>Unggah File CSV</h2>
+            <form class="upload-form" action="{{ url_for('train_data') }}" method="post" enctype="multipart/form-data">
+                <label for="file-upload">Pilih File</label>
+                <input type="file" id="file-upload" name="file" accept=".csv" required onchange="displayFileName(this)">
+                <button type="submit">Unggah</button>
+            </form>
+            <div id="file-name"></div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Ulasan</th>
+                    <th>Label</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td>{{ row.text }}</td>
+                    <td>{{ row.label }}</td>
+                    <td>
+                        <button class="update-button" onclick="openUpdateModal('{{ row.id }}', '{{ row.text }}', '{{ row.label }}')">Edit</button>
+                        <button class="delete-button" onclick="openDeleteModal('{{ row.id }}')">Delete</button>
+                    </td>                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Update Modal -->
+    <div id="updateModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeUpdateModal()">&times;</span>
+            <h2>Update Data</h2>
+            <form id="update-form" action="{{ url_for('update_review') }}" method="post">
+                <input type="hidden" name="id" id="update-id">
+                <label for="update-text">Text:</label>
+                <input type="text" name="text" id="update-text" required>
+                <label for="update-label">Label:</label>
+                <input type="text" name="label" id="update-label" required>
+                <button type="submit" class="update-button">Update</button>
+            </form>            
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDeleteModal()">&times;</span>
+            <h2>Hapus Data</h2>
+            <form action="{{ url_for('delete_review') }}" method="post" id="delete-form">
+                <input type="hidden" name="id" id="delete-id">
+                <p>Anda yakin ingin menghapus data ini?</p>
+                <button type="submit" class="delete-button">Hapus</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function displayFileName(input) {
+            var fileName = input.files[0].name;
+            document.getElementById('file-name').innerText = "File yang dipilih: " + fileName;
+        }
+
+        function openUpdateModal(id, text, label) {
+        document.getElementById('update-id').value = id;
+        document.getElementById('update-text').value = text;
+        document.getElementById('update-label').value = label;
+        document.getElementById('updateModal').style.display = 'block';
+        }
+
+        function closeUpdateModal() {
+            document.getElementById('updateModal').style.display = 'none';
+        }
+
+        function openDeleteModal(id) {
+            document.getElementById('delete-id').value = id;
+            document.getElementById('deleteModal').style.display = 'block';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

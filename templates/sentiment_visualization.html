@@ -1,0 +1,116 @@
+<!-- sentiment_visualization.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualisasi Sentimen</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <style>
+        .content {
+            padding: 20px;
+        }
+
+        .visualization-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .visualization-container div {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .visualization-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .chart-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    {% include 'menu.html' %}
+
+    <div class="content">
+        <h1>Visualisasi WordCloud</h1>
+        <div class="visualization-container">
+            <div>
+                <h3>Positif</h3>
+                <img src="{{ url_for('static', filename='wordcloud_positive.png') }}" alt="Positive WordCloud">
+            </div>
+            <div>
+                <h3>Netral</h3>
+                <img src="{{ url_for('static', filename='wordcloud_neutral.png') }}" alt="Neutral WordCloud">
+            </div>
+            <div>
+                <h3>Negatif</h3>
+                <img src="{{ url_for('static', filename='wordcloud_negative.png') }}" alt="Negative WordCloud">
+            </div>
+        </div>
+
+        <h2>Analisis Kata Paling Sering Muncul</h2>
+        <div class="visualization-container">
+            <div>
+                <h3>Positif</h3>
+                <ul>
+                    {% for word, count in positive_most_common %}
+                        <li>{{ word }}: {{ count }}</li>
+                    {% endfor %}
+                    <li>Total words: {{ positive_word_count }}</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Netral</h3>
+                <ul>
+                    {% for word, count in neutral_most_common %}
+                        <li>{{ word }}: {{ count }}</li>
+                    {% endfor %}
+                    <li>Total words: {{ neutral_word_count }}</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Negatif</h3>
+                <ul>
+                    {% for word, count in negative_most_common %}
+                        <li>{{ word }}: {{ count }}</li>
+                    {% endfor %}
+                    <li>Total words: {{ negative_word_count }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
