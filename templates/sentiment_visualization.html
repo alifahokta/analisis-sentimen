@@ -58,7 +58,13 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
     </style>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     {% include 'header.html' %}
@@ -111,6 +117,110 @@
                 </ul>
             </div>
         </div>
+
+        <h2>Analisis Sentimen Berdasarkan Waktu</h2>
+        <div id="myChartContainer">
+            <canvas id="myChart"></canvas>
+        </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ambil data dari variabel JavaScript yang didefinisikan di template
+            // const monthlySentimentData = JSON.parse('{{ monthly_sentiment | tojson | safe }}');
+
+            const monthData = [
+                { month: '2022-01', Positive: 189, Neutral: 23, Negative: 11 },
+                { month: '2022-02', Positive: 118, Neutral: 9, Negative: 3 },
+                { month: '2022-03', Positive: 100, Neutral: 20, Negative: 5 },
+                { month: '2022-04', Positive: 37, Neutral: 2, Negative: 2 },
+                { month: '2022-05', Positive: 162, Neutral: 20, Negative: 11 },
+                { month: '2022-06', Positive: 113, Neutral: 13, Negative: 7 },
+                { month: '2022-07', Positive: 120, Neutral: 18, Negative: 5 },
+                { month: '2022-08', Positive: 62, Neutral: 3, Negative: 4 },
+                { month: '2022-09', Positive: 47, Neutral: 9, Negative: 1 },
+                { month: '2022-10', Positive: 57, Neutral: 8, Negative: 2 },
+                { month: '2022-11', Positive: 60, Neutral: 9, Negative: 3 },
+                { month: '2022-12', Positive: 88, Neutral: 14, Negative: 4 },
+                { month: '2023-01', Positive: 116, Neutral: 11, Negative: 6 },
+                { month: '2023-02', Positive: 62, Neutral: 9, Negative: 11 },
+                { month: '2023-03', Positive: 51, Neutral: 6, Negative: 5 },
+                { month: '2023-04', Positive: 39, Neutral: 1, Negative: 8 },
+                { month: '2023-05', Positive: 58, Neutral: 9, Negative: 7 },
+                { month: '2023-06', Positive: 55, Neutral: 5, Negative: 1 },
+                { month: '2023-07', Positive: 102, Neutral: 7, Negative: 4 },
+                { month: '2023-08', Positive: 52, Neutral: 4, Negative: 2 },
+                { month: '2023-09', Positive: 61, Neutral: 2, Negative: 1 },
+                { month: '2023-10', Positive: 51, Neutral: 6, Negative: 2 },
+                { month: '2023-11', Positive: 58, Neutral: 5, Negative: 7 },
+                { month: '2023-12', Positive: 89, Neutral: 7, Negative: 3 }
+            ];
+
+            const labels = monthData.map(item => item.month);
+            const positiveData = monthData.map(item => item.Positive);
+            const neutralData = monthData.map(item => item.Neutral);
+            const negativeData = monthData.map(item => item.Negative);
+            
+            // Mengambil data dari JSON
+            //const labels = monthlySentimentData.map(item => item.month);
+            //const positiveData = monthlySentimentData.map(item => item.Positive);
+            //const neutralData = monthlySentimentData.map(item => item.Neutral);
+            //const negativeData = monthlySentimentData.map(item => item.Negative);
+
+            // Membuat grafik
+            const ctx = document.getElementById('myChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line', // Ubah tipe grafik menjadi 'line'
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Positif',
+                            data: positiveData,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            fill: false, // Jangan isi area di bawah garis
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Netral',
+                            data: neutralData,
+                            borderColor: 'rgba(255, 206, 86, 1)',
+                            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                            fill: false,
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Negatif',
+                            data: negativeData,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            fill: false,
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Bulan'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Jumlah'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

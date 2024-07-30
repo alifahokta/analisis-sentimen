@@ -122,7 +122,7 @@ def perform_classification(split_ratio=0.3):
     total_docs = sum(category_counts.values())
     priors = {category: count / total_docs for category, count in category_counts.items()}
 
-    # Menghitung Likelihood (P(W|Cj)) dengan smoothing Laplace
+    # Menghitung Likelihood (P(W|Cj))
     vocab = set(word for doc in X_train for word in doc.split())
     vocab_size = len(vocab)
     likelihoods = defaultdict(lambda: defaultdict(float))
@@ -155,7 +155,7 @@ def perform_classification(split_ratio=0.3):
     predict_time = time.time() - start_time
 
     accuracy = accuracy_score(y_test, y_pred)
-    classification_rep = classification_report(y_test, y_pred, output_dict=True)  # Output as dictionary
+    classification_rep = classification_report(y_test, y_pred, output_dict=True)
     confusion_mtx = confusion_matrix(y_test, y_pred)
 
     # Extract precision, recall, and f1-score
@@ -371,68 +371,97 @@ def accuracy_testing():
 def sentiment_visualization():
     # Ambil data sentimen dari MySQL
     cur = mysql.connection.cursor()
-    cur.execute("SELECT original_sentiment, predicted_sentiment, preprocessing_text FROM predictions")
-    data = cur.fetchall()
-    cur.close()
+    try:
+        cur.execute("SELECT original_sentiment, predicted_sentiment, preprocessing_text FROM predictions")
+        data = cur.fetchall()
+        cur.close()
 
-    # Hitung jumlah data positif, netral, dan negatif untuk original_sentiment
-    original_sentiment_counts = {
-        'Positive': sum(1 for row in data if row[0] == 'positif'),
-        'Neutral': sum(1 for row in data if row[0] == 'netral'),
-        'Negative': sum(1 for row in data if row[0] == 'negatif')
-    }
+        # Hitung jumlah data positif, netral, dan negatif untuk original_sentiment
+        original_sentiment_counts = {
+            'Positive': sum(1 for row in data if row[0] == 'positif'),
+            'Neutral': sum(1 for row in data if row[0] == 'netral'),
+            'Negative': sum(1 for row in data if row[0] == 'negatif')
+        }
 
-    # Hitung jumlah data positif, netral, dan negatif untuk predicted_sentiment
-    predicted_sentiment_counts = {
-        'Positive': sum(1 for row in data if row[1] == 'positif'),
-        'Neutral': sum(1 for row in data if row[1] == 'netral'),
-        'Negative': sum(1 for row in data if row[1] == 'negatif')
-    }
+        # Hitung jumlah data positif, netral, dan negatif untuk predicted_sentiment
+        predicted_sentiment_counts = {
+            'Positive': sum(1 for row in data if row[1] == 'positif'),
+            'Neutral': sum(1 for row in data if row[1] == 'netral'),
+            'Negative': sum(1 for row in data if row[1] == 'negatif')
+        }
 
-    # Memisahkan teks berdasarkan sentimen
-    positive_text = " ".join([row[2] for row in data if row[1] == 'positif'])
-    neutral_text = " ".join([row[2] for row in data if row[1] == 'netral'])
-    negative_text = " ".join([row[2] for row in data if row[1] == 'negatif'])
+        # Memisahkan teks berdasarkan sentimen
+        positive_text = " ".join([row[2] for row in data if row[1] == 'positif'])
+        neutral_text = " ".join([row[2] for row in data if row[1] == 'netral'])
+        negative_text = " ".join([row[2] for row in data if row[1] == 'negatif'])
 
-    # Membuat WordCloud untuk masing-masing sentimen
-    wordcloud_positive = WordCloud(width=800, height=400, background_color="white").generate(positive_text)
-    wordcloud_neutral = WordCloud(width=800, height=400, background_color="white").generate(neutral_text)
-    wordcloud_negative = WordCloud(width=800, height=400, background_color="white").generate(negative_text)
+        # Membuat WordCloud untuk masing-masing sentimen
+        wordcloud_positive = WordCloud(width=800, height=400, background_color="white").generate(positive_text)
+        wordcloud_neutral = WordCloud(width=800, height=400, background_color="white").generate(neutral_text)
+        wordcloud_negative = WordCloud(width=800, height=400, background_color="white").generate(negative_text)
 
-    # Simpan WordCloud sebagai gambar
-    wordcloud_positive.to_file('static/wordcloud_positive.png')
-    wordcloud_neutral.to_file('static/wordcloud_neutral.png')
-    wordcloud_negative.to_file('static/wordcloud_negative.png')
-    
-    # Filter stop words dari setiap kategori teks
-    positive_words = [word for word in positive_text.split() if word not in stop_words]
-    neutral_words = [word for word in neutral_text.split() if word not in stop_words]
-    negative_words = [word for word in negative_text.split() if word not in stop_words]
+        # Simpan WordCloud sebagai gambar
+        wordcloud_positive.to_file('static/wordcloud_positive.png')
+        wordcloud_neutral.to_file('static/wordcloud_neutral.png')
+        wordcloud_negative.to_file('static/wordcloud_negative.png')
+        
+        # Filter stop words dari setiap kategori teks
+        positive_words = [word for word in positive_text.split() if word not in stop_words]
+        neutral_words = [word for word in neutral_text.split() if word not in stop_words]
+        negative_words = [word for word in negative_text.split() if word not in stop_words]
 
-    # Hitung frekuensi kata
-    positive_word_counts = Counter(positive_words)
-    neutral_word_counts = Counter(neutral_words)
-    negative_word_counts = Counter(negative_words)
+        # Hitung frekuensi kata
+        positive_word_counts = Counter(positive_words)
+        neutral_word_counts = Counter(neutral_words)
+        negative_word_counts = Counter(negative_words)
 
-    # Mengambil 5 kata yang paling banyak muncul
-    positive_most_common = positive_word_counts.most_common(5)
-    neutral_most_common = neutral_word_counts.most_common(5)
-    negative_most_common = negative_word_counts.most_common(5)
+        # Mengambil 5 kata yang paling banyak muncul
+        positive_most_common = positive_word_counts.most_common(5)
+        neutral_most_common = neutral_word_counts.most_common(5)
+        negative_most_common = negative_word_counts.most_common(5)
 
-    # Hitung jumlah kata pada setiap sentimen
-    positive_word_count = len(positive_words)
-    neutral_word_count = len(neutral_words)
-    negative_word_count = len(negative_words)
+        # Hitung jumlah kata pada setiap sentimen
+        positive_word_count = len(positive_words)
+        neutral_word_count = len(neutral_words)
+        negative_word_count = len(negative_words)
 
-    return render_template('sentiment_visualization.html',
-                           original_sentiment_counts=original_sentiment_counts,
-                            predicted_sentiment_counts=predicted_sentiment_counts,
-                           positive_most_common=positive_most_common,
-                           neutral_most_common=neutral_most_common,
-                           negative_most_common=negative_most_common,
-                           positive_word_count=positive_word_count,
-                           neutral_word_count=neutral_word_count,
-                           negative_word_count=negative_word_count)
+        # Ambil data sentimen dari tabel monthly_sentiment_summary dan hitung jumlah per bulan
+        cur.execute("""
+            SELECT 
+                month AS month,
+                positive_count AS Positive,
+                neutral_count AS Neutral,
+                negative_count AS Negative
+            FROM monthly_sentiment_summary
+            ORDER BY month
+        """)
+        monthly_sentiment_data = cur.fetchall()
+
+        cur.close()
+
+        # Format data untuk Chart.js
+        formatted_monthly_sentiment_data = [
+            {'month': row[0], 'Positive': row[1], 'Neutral': row[2], 'Negative': row[3]}
+            for row in monthly_sentiment_data
+        ]
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        formatted_monthly_sentiment_data = []
+    finally:
+        cur.close()
+
+    return render_template(
+        'sentiment_visualization.html',
+        original_sentiment_counts=original_sentiment_counts,
+        predicted_sentiment_counts=predicted_sentiment_counts,
+        positive_most_common=positive_most_common,
+        neutral_most_common=neutral_most_common,
+        negative_most_common=negative_most_common,
+        positive_word_count=positive_word_count,
+        neutral_word_count=neutral_word_count,
+        negative_word_count=negative_word_count,
+        monthly_sentiment=formatted_monthly_sentiment_data)
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
