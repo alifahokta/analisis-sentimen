@@ -1,4 +1,3 @@
-<!-- sentiment_visualization.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +6,8 @@
     <title>Visualisasi Sentimen</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         .content {
             padding: 20px;
@@ -62,9 +63,23 @@
             width: 100% !important;
             height: auto !important;
         }
+
+        .filter-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-container input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
     </style>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body>
     {% include 'header.html' %}
@@ -119,6 +134,9 @@
         </div>
 
         <h2>Analisis Sentimen Berdasarkan Waktu</h2>
+        <div class="filter-container">
+            <input type="text" id="dateRangePicker" placeholder="Pilih rentang tanggal">
+        </div>
         <div id="myChartContainer">
             <canvas id="myChart"></canvas>
         </div>
@@ -126,9 +144,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Ambil data dari variabel JavaScript yang didefinisikan di template
-            // const monthlySentimentData = JSON.parse('{{ monthly_sentiment | tojson | safe }}');
-
             const monthData = [
                 { month: '2022-01', Positive: 189, Neutral: 23, Negative: 11 },
                 { month: '2022-02', Positive: 118, Neutral: 9, Negative: 3 },
@@ -148,29 +163,24 @@
                 { month: '2023-04', Positive: 39, Neutral: 1, Negative: 8 },
                 { month: '2023-05', Positive: 58, Neutral: 9, Negative: 7 },
                 { month: '2023-06', Positive: 55, Neutral: 5, Negative: 1 },
-                { month: '2023-07', Positive: 102, Neutral: 7, Negative: 4 },
-                { month: '2023-08', Positive: 52, Neutral: 4, Negative: 2 },
+                { month: '2023-07', Positive: 103, Neutral: 7, Negative: 4 },
+                { month: '2023-08', Positive: 53, Neutral: 4, Negative: 2 },
                 { month: '2023-09', Positive: 61, Neutral: 2, Negative: 1 },
                 { month: '2023-10', Positive: 51, Neutral: 6, Negative: 2 },
                 { month: '2023-11', Positive: 58, Neutral: 5, Negative: 7 },
                 { month: '2023-12', Positive: 89, Neutral: 7, Negative: 3 }
             ];
 
-            const labels = monthData.map(item => item.month);
-            const positiveData = monthData.map(item => item.Positive);
-            const neutralData = monthData.map(item => item.Neutral);
-            const negativeData = monthData.map(item => item.Negative);
-            
-            // Mengambil data dari JSON
-            //const labels = monthlySentimentData.map(item => item.month);
-            //const positiveData = monthlySentimentData.map(item => item.Positive);
-            //const neutralData = monthlySentimentData.map(item => item.Neutral);
-            //const negativeData = monthlySentimentData.map(item => item.Negative);
+            let filteredData = monthData;
 
-            // Membuat grafik
+            const labels = filteredData.map(item => item.month);
+            const positiveData = filteredData.map(item => item.Positive);
+            const neutralData = filteredData.map(item => item.Neutral);
+            const negativeData = filteredData.map(item => item.Negative);
+
             const ctx = document.getElementById('myChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line', // Ubah tipe grafik menjadi 'line'
+            const myChart = new Chart(ctx, {
+                type: 'line',
                 data: {
                     labels: labels,
                     datasets: [
@@ -179,7 +189,7 @@
                             data: positiveData,
                             borderColor: 'rgba(75, 192, 192, 1)',
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            fill: false, // Jangan isi area di bawah garis
+                            fill: false,
                             tension: 0.1
                         },
                         {
@@ -217,6 +227,30 @@
                                 text: 'Jumlah'
                             }
                         }
+                    }
+                }
+            });
+
+            flatpickr("#dateRangePicker", {
+                mode: "range",
+                dateFormat: "Y-m",
+                onClose: function(selectedDates, dateStr, instance) {
+                    if (selectedDates.length === 2) {
+                        const [startDate, endDate] = selectedDates;
+                        const startMonth = startDate.getFullYear() + '-' + String(startDate.getMonth() + 1).padStart(2, '0');
+                        const endMonth = endDate.getFullYear() + '-' + String(endDate.getMonth() + 1).padStart(2, '0');
+
+                        filteredData = monthData.filter(item => item.month >= startMonth && item.month <= endMonth);
+                        const newLabels = filteredData.map(item => item.month);
+                        const newPositiveData = filteredData.map(item => item.Positive);
+                        const newNeutralData = filteredData.map(item => item.Neutral);
+                        const newNegativeData = filteredData.map(item => item.Negative);
+
+                        myChart.data.labels = newLabels;
+                        myChart.data.datasets[0].data = newPositiveData;
+                        myChart.data.datasets[1].data = newNeutralData;
+                        myChart.data.datasets[2].data = newNegativeData;
+                        myChart.update();
                     }
                 }
             });

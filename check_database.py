@@ -12,7 +12,7 @@ mydb = mysql.connector.connect(
 mycursor = mydb.cursor()
 
 # Menjalankan query untuk menghitung jumlah baris di tabel reviews
-mycursor.execute("SELECT COUNT(*) FROM preprocessed_reviews")
+mycursor.execute("SELECT COUNT(*) FROM all_reviews")
 
 # Mengambil hasil query
 result = mycursor.fetchone()[0]

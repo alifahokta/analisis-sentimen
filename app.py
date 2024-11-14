@@ -450,7 +450,7 @@ def sentiment_visualization():
         formatted_monthly_sentiment_data = []
     finally:
         cur.close()
-
+    
     return render_template(
         'sentiment_visualization.html',
         original_sentiment_counts=original_sentiment_counts,
